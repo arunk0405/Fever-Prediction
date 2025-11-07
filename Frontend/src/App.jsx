@@ -2,9 +2,13 @@ import { useState } from 'react'
 import GovernmentView from './views/GovernmentView'
 import PharmaView from './views/PharmaView'
 import PublicView from './views/PublicView'
+import { mockRegions } from './utils/mockData'
 
 function App() {
-  const [currentView, setCurrentView] = useState('government')
+  const [currentView, setCurrentView] = useState('public')
+
+  console.log('App rendering, mockRegions:', mockRegions)
+  console.log('Current view:', currentView)
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -48,8 +52,8 @@ function App() {
 
       {/* Render Current View */}
       <div className="container mx-auto">
-        {currentView === 'government' && <GovernmentView />}
-        {currentView === 'pharma' && <PharmaView />}
+        {currentView === 'government' && <GovernmentView regions={mockRegions} />}
+        {currentView === 'pharma' && <PharmaView regions={mockRegions} />}
         {currentView === 'public' && <PublicView />}
       </div>
     </div>
