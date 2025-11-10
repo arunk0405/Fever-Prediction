@@ -1,182 +1,92 @@
 import React, { useState } from 'react';
-import { MapPin, Thermometer, AlertCircle, Share2, Twitter, Facebook } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { mockRegions } from '../utils/mockData';
+import { format } from 'date-fns';
+import LocationCard from '../components/LocationCard';
+import SearchBar from '../components/SearchBar';
+import RiskLevelInfo from '../components/RiskLevelInfo';
+import SimplePreventionTips from '../components/SimplePreventionTips';
 
 const PublicView = () => {
-  const [userRegion, setUserRegion] = useState('Chennai');
-  const regions = mockRegions;
-  const regionData = regions.find(r => r.region === userRegion) || regions[0];
-
-  const shareOnTwitter = () => {
-    const text = `⚠️ ${regionData.fever_type} outbreak risk alert for ${regionData.region}! Stay safe and follow preventive measures. #HealthAlert #FeverOutbreak`;
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
-  };
-
-  const shareOnFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
-  };
-
-  const getAwarenessTip = () => {
-    if (regionData.fever_type === 'Dengue') {
-      return {
-        icon: '🦟',
-        title: 'Dengue Prevention',
-        tips: [
-          'Use mosquito repellents and wear long-sleeved clothing',
-          'Remove stagnant water from containers and coolers',
-          'Use mosquito nets while sleeping',
-          'Keep surroundings clean and dry'
-        ]
-      };
-    } else if (regionData.fever_type === 'Malaria') {
-      return {
-        icon: '🦟',
-        title: 'Malaria Prevention',
-        tips: [
-          'Sleep under insecticide-treated mosquito nets',
-          'Use indoor residual spraying',
-          'Take antimalarial medication if prescribed',
-          'Wear protective clothing during peak mosquito hours'
-        ]
-      };
-    } else {
-      return {
-        icon: '🌡️',
-        title: 'General Fever Prevention',
-        tips: [
-          'Maintain good hygiene practices',
-          'Wash hands frequently with soap',
-          'Avoid crowded places if possible',
-          'Stay hydrated and get adequate rest'
-        ]
-      };
-    }
-  };
-
-  const tip = getAwarenessTip();
+  const [lastUpdated] = useState(new Date());
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-teal-50 to-cyan-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 md:p-6">
+      <div className="max-w-5xl mx-auto">
+        {/* Header Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-800 dark:text-white mb-2">
-            🏥 Fever Outbreak Alert System
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300">
-            Stay informed about fever outbreaks in your region
+          <div className="flex items-center justify-center gap-3 mb-3">
+            <div className="bg-gradient-to-br from-primary-500 to-teal-600 p-3 rounded-2xl shadow-lg">
+              <span className="text-3xl">🏥</span>
+            </div>
+            <div className="text-left">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">
+                Public Awareness Dashboard
+              </h1>
+              <p className="text-lg font-semibold text-primary-600 dark:text-primary-400">
+                FeverCast360
+              </p>
+            </div>
+          </div>
+          <p className="text-lg md:text-xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            Recognize. Respond. Reduce.
           </p>
+          
+          {/* Last Updated */}
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <Clock className="w-4 h-4" />
+            <span>Last Updated: {format(lastUpdated, 'PPpp')}</span>
+          </div>
         </motion.div>
 
-        {/* Region Selector */}
-        <motion.div
+        {/* Location Detection Card */}
+        <LocationCard />
+
+        {/* Search Bar Section */}
+        <SearchBar />
+
+        {/* Risk Awareness Panel */}
+        <RiskLevelInfo />
+
+        {/* Preventive Tips Section */}
+        <SimplePreventionTips />
+
+        {/* Footer Section */}
+        <motion.footer
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6"
-        >
-          <label className="block text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">
-            <MapPin className="inline mr-2" size={20} />
-            Select Your Region
-          </label>
-          <select
-            value={userRegion}
-            onChange={(e) => setUserRegion(e.target.value)}
-            className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500"
-          >
-            {regions.map(region => (
-              <option key={region.region} value={region.region}>
-                {region.region}
-              </option>
-            ))}
-          </select>
-        </motion.div>
-
-        {/* Alert Card */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6 border-l-4 ${
-            regionData.risk_level === 'High' ? 'border-red-500' :
-            regionData.risk_level === 'Medium' ? 'border-yellow-500' : 'border-green-500'
-          }`}
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              <div className="flex items-center mb-4">
-                <AlertCircle className={`mr-2 ${
-                  regionData.risk_level === 'High' ? 'text-red-500' :
-                  regionData.risk_level === 'Medium' ? 'text-yellow-500' : 'text-green-500'
-                }`} size={28} />
-                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                  {regionData.fever_type} Outbreak Alert
-                </h2>
-              </div>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Risk Level</p>
-                  <p className={`text-xl font-bold ${
-                    regionData.risk_level === 'High' ? 'text-red-600' :
-                    regionData.risk_level === 'Medium' ? 'text-yellow-600' : 'text-green-600'
-                  }`}>
-                    {regionData.risk_level}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Cases Reported</p>
-                  <p className="text-xl font-bold text-gray-800 dark:text-white">
-                    {regionData.cases}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <Thermometer className="text-red-500" size={48} />
-          </div>
-
-          {/* Share Buttons */}
-          <div className="flex gap-3 mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={shareOnTwitter}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              <Twitter size={18} />
-              Share on Twitter
-            </button>
-            <button
-              onClick={shareOnFacebook}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
-            >
-              <Facebook size={18} />
-              Share on Facebook
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Awareness Tips */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6"
+          className="text-center py-8 mt-8 border-t-2 border-gray-200 dark:border-gray-700"
         >
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-            {tip.icon} {tip.title}
-          </h3>
-          <ul className="space-y-3">
-            {tip.tips.map((tipText, index) => (
-              <li key={index} className="flex items-start">
-                <span className="text-green-500 mr-2 text-xl">✓</span>
-                <span className="text-gray-700 dark:text-gray-300">{tipText}</span>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
+          <div className="mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 max-w-2xl mx-auto">
+              This information is for general awareness only. FeverCast360 helps Micro Labs and Governments take preventive actions early.
+            </p>
+            <p className="text-xl font-bold bg-gradient-to-r from-primary-600 to-teal-600 bg-clip-text text-transparent mb-2">
+              FeverCast360
+            </p>
+            <p className="text-gray-600 dark:text-gray-400 italic">
+              Empowering prevention through prediction
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+            <a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              Home
+            </a>
+            <span>|</span>
+            <a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              About
+            </a>
+            <span>|</span>
+            <a href="#" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              Privacy Policy
+            </a>
+          </div>
+        </motion.footer>
       </div>
     </div>
   );

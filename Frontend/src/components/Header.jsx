@@ -21,7 +21,7 @@ const Header = ({ userView, setUserView, lastUpdated, onRefresh }) => {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-                Fever Outbreak Prediction Dashboard
+                FeverCast360
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 AI-powered predictive health analytics for fever surveillance and response
