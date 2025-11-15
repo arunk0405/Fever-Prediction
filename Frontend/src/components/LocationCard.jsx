@@ -22,7 +22,7 @@ const LocationCard = ({ onLocationDetected }) => {
         // Simulate fetching location data
         // In real app, call: /public_location_risk?lat=${lat}&lon=${lon}
         const mockData = {
-          region: 'Chennai',
+          region: 'Bengaluru Urban',
           risk: 'Moderate',
           fever: 'Viral Fever',
           message: 'Seasonal fever activity slightly increased. Stay hydrated and avoid crowded places.'
